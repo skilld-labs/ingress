@@ -31,6 +31,7 @@ const (
 	// external URL that provides the authentication
 	authURL       = "ingress.kubernetes.io/auth-url"
 	authSigninURL = "ingress.kubernetes.io/auth-signin"
+	authContext   = "ingress.kubernetes.io/auth-context"
 	authMethod    = "ingress.kubernetes.io/auth-method"
 	authBody      = "ingress.kubernetes.io/auth-send-body"
 	authHeaders   = "ingress.kubernetes.io/auth-response-headers"
@@ -42,6 +43,7 @@ type External struct {
 	// Host contains the hostname defined in the URL
 	Host            string   `json:"host"`
 	SigninURL       string   `json:"signinUrl"`
+	Context         string   `json:"context"`
 	Method          string   `json:"method"`
 	SendBody        bool     `json:"sendBody"`
 	ResponseHeaders []string `json:"responseHeaders,omitEmpty"`
@@ -171,10 +173,12 @@ func (a authReq) Parse(ing *extensions.Ingress) (interface{}, error) {
 	}
 
 	sb, _ := parser.GetBoolAnnotation(authBody, ing)
+	ctx, _ := parser.GetStringAnnotation(authContext, ing)
 
 	return &External{
 		URL:             str,
 		Host:            ur.Hostname(),
+		Context:         ctx,
 		SigninURL:       signin,
 		Method:          m,
 		SendBody:        sb,
