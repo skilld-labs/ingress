@@ -348,6 +348,9 @@ http {
             proxy_set_header            X-Original-URI $request_uri;
             proxy_set_header            X-Scheme       $pass_access_scheme;
             {{ end }}
+            {{ if not (empty $location.ExternalAuth.Context) }}
+            proxy_set_header            X-Context       {{ $location.ExternalAuth.Context }};
+            {{ end }}
             proxy_pass_request_headers  on;
             proxy_set_header            Host {{ $location.ExternalAuth.Host }};
             proxy_ssl_server_name       on;
